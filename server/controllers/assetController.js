@@ -2,7 +2,7 @@ const Asset = require('../models/Asset');
 
 exports.createAsset = async (req, res) => {
     try {
-        const { title, description, category, categoryData, legalityImages, price } = req.body;
+        const { title, description, category, categoryData, legalityImages, productImages, productVideo, price } = req.body;
         const newAsset = new Asset({
             seller: req.user.id,
             title,
@@ -10,6 +10,8 @@ exports.createAsset = async (req, res) => {
             category,
             categoryData,
             legalityImages,
+            productImages,
+            productVideo,
             price
         });
         const asset = await newAsset.save();
