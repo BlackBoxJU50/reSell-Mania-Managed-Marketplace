@@ -47,5 +47,6 @@ router.post('/register', authController.register);
  */
 router.post('/login', authController.login);
 router.patch('/update-profile', auth, authController.updateProfile);
+router.patch('/change-password', auth, authController.changePassword);
 
 module.exports = router;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Package, ShieldCheck, Clock, CheckCircle, Truck } from 'lucide-react';
+import { ShoppingBag, Package, ShieldCheck, Clock, CheckCircle, Truck, Settings } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const statusColors = {
@@ -27,7 +27,20 @@ const UserDashboard = () => {
     const [orders, setOrders]       = useState([]);
     const [loading, setLoading]     = useState(true);
     const [activeView, setActiveView] = useState('listings');
+    const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '' });
+    const [passwordStatus, setPasswordStatus] = useState({ loading: false, message: '', error: '' });
 
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+        setPasswordStatus({ loading: true, message: '', error: '' });
+        try {
+            const res = await api.patch('/auth/change-password', passwordForm);
+            setPasswordStatus({ loading: false, message: res.data.message, error: '' });
+            setPasswordForm({ currentPassword: '', newPassword: '' });
+        } catch (err) {
+            setPasswordStatus({ loading: false, message: '', error: err.response?.data?.message || 'Failed to update password' });
+        }
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -76,7 +89,14 @@ const UserDashboard = () => {
                     >
                         My Purchases ({orders.length})
                     </button>
+                    <button
+                        onClick={() => setActiveView('settings')}
+                        className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeView === 'settings' ? 'bg-white text-primary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-primary'}`}
+                    >
+                        <Settings size={16} className="inline-block mr-1" /> Settings
+                    </button>
                 </div>
+
             </header>
 
             {activeView === 'listings' ? (
@@ -142,7 +162,7 @@ const UserDashboard = () => {
                         </div>
                     )}
                 </div>
-            ) : (
+            ) : activeView === 'orders' ? (
                 /* Orders Tab */
                 <div className="space-y-4">
                     {orders.length === 0 ? (
@@ -201,7 +221,57 @@ const UserDashboard = () => {
                         </div>
                     )}
                 </div>
-            )}
+            ) : activeView === 'settings' ? (
+                <div className="max-w-md mx-auto bg-white rounded-3xl border border-gray-100 p-8 shadow-sm space-y-6">
+                    <header className="space-y-1 border-b border-gray-50 pb-4">
+                        <h2 className="text-xl font-black text-primary uppercase tracking-tighter">Security Settings</h2>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Update your password securely</p>
+                    </header>
+
+                    {passwordStatus.message && (
+                        <div className="bg-success/10 text-success p-4 rounded-xl text-xs font-bold uppercase tracking-widest border border-success/20">
+                            {passwordStatus.message}
+                        </div>
+                    )}
+                    {passwordStatus.error && (
+                        <div className="bg-red-50 text-red-600 p-4 rounded-xl text-xs font-bold uppercase tracking-widest border border-red-100">
+                            {passwordStatus.error}
+                        </div>
+                    )}
+
+                    <form onSubmit={handlePasswordChange} className="space-y-5">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Current Password</label>
+                            <input
+                                required
+                                type="password"
+                                className="amazon-input bg-gray-50 border-none font-bold placeholder:text-gray-300 py-3 rounded-xl"
+                                value={passwordForm.currentPassword}
+                                onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">New Password</label>
+                            <input
+                                required
+                                type="password"
+                                minLength={6}
+                                className="amazon-input bg-gray-50 border-none font-bold placeholder:text-gray-300 py-3 rounded-xl"
+                                value={passwordForm.newPassword}
+                                onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={passwordStatus.loading}
+                            className="w-full bg-accent text-primary py-4 rounded-xl font-black uppercase tracking-widest text-xs shadow-lg hover:shadow-accent/20 active:scale-95 transition-all disabled:opacity-50"
+                        >
+                            {passwordStatus.loading ? 'Updating...' : 'Change Password'}
+                        </button>
+                    </form>
+                </div>
+            ) : null}
         </div>
     );
 };
