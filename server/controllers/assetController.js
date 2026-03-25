@@ -3,6 +3,14 @@ const Asset = require('../models/Asset');
 exports.createAsset = async (req, res) => {
     try {
         const { title, description, category, categoryData, legalityImages, productImages, productVideo, price } = req.body;
+        
+        if (!title || !description || !category || price === undefined) {
+            return res.status(400).json({ message: 'Missing required fields: title, description, category, or price' });
+        }
+        if (price <= 0) {
+            return res.status(400).json({ message: 'Price must be greater than zero' });
+        }
+
         const newAsset = new Asset({
             seller: req.user.id,
             title,

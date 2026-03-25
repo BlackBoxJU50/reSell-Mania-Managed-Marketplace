@@ -10,6 +10,9 @@ exports.createOrder = async (req, res) => {
         
         if (!asset) return res.status(404).json({ message: 'Asset not found' });
         if (asset.status !== 'LIVE') return res.status(400).json({ message: 'Asset is no longer available for purchase' });
+        if (asset.seller.toString() === req.user.id.toString()) {
+            return res.status(400).json({ message: 'You cannot buy your own product' });
+        }
 
         const newOrder = new Order({
             buyer: req.user.id,
