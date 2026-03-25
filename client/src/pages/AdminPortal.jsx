@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Clock, CheckCircle, AlertCircle, Users, Package, Trash2, Shield, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock, CheckCircle, AlertCircle, Users, Package, Trash2, Shield, Activity, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { AdminStatsSkeleton } from '../components/Skeleton';
 

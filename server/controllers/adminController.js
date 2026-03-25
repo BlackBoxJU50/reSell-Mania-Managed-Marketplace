@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Asset = require('../models/Asset');
 const Transaction = require('../models/Transaction');
 const Ledger = require('../models/Ledger');
+const Order = require('../models/Order');
 
 // User Management
 exports.getAllUsers = async (req, res) => {
