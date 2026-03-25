@@ -102,7 +102,7 @@ const Home = () => {
                             >
                                 <div className="aspect-[4/3] relative overflow-hidden bg-gray-50">
                                     <img
-                                        src={'https://placehold.co/400x300?text=' + encodeURIComponent(asset.title)}
+                                        src={asset.productImages?.[0] || 'https://placehold.co/400x300?text=' + encodeURIComponent(asset.title)}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 font-bold"
                                         alt={asset.title}
                                     />
