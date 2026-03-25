@@ -118,7 +118,7 @@ const Navbar = () => {
                         <div className="hidden md:flex items-center gap-6">
                             {!isAdmin && (
                                 <Link to="/sell" className="text-sm font-bold hover:text-accent transition-colors">
-                                    Sell your product
+                                    Sell Product
                                 </Link>
                             )}
 
@@ -188,7 +188,7 @@ const Navbar = () => {
                     <div className="container mx-auto px-4 flex flex-col gap-4 font-bold uppercase text-xs tracking-widest">
                         {!isAdmin && (
                             <Link to="/sell" onClick={() => setIsMenuOpen(false)} className="py-2 border-b border-gray-700 flex justify-between items-center text-accent">
-                                Sell your product <span>→</span>
+                                Sell Product <span>→</span>
                             </Link>
                         )}
                         {user && (
@@ -207,8 +207,8 @@ const Navbar = () => {
                             </Link>
                         )}
                         {user && (
-                            <button onClick={handleLogout} className="py-2 text-red-400 text-left font-black tracking-[0.2em]">
-                                DISCONNECT PROTOCOL (LOGOUT)
+                            <button onClick={handleLogout} className="py-2 text-red-500 text-left font-black tracking-[0.2em] border-t border-red-900/30 w-full mt-2 pt-4">
+                                LOGOUT
                             </button>
                         )}
                     </div>

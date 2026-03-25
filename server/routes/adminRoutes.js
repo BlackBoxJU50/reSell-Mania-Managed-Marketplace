@@ -38,6 +38,7 @@ router.get('/assets', auth, admin, adminController.getAllAssets);
  *     tags: [Admin]
  */
 router.delete('/assets/:id', auth, admin, adminController.deleteAsset);
+router.patch('/assets/:id', auth, admin, adminController.updateAsset);
 
 /**
  * @openapi

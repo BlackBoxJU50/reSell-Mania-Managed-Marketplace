@@ -18,31 +18,31 @@ export const translations = {
             }
         },
         home: {
-            heroTitle: "Trusted Exchange For Premium Products",
-            heroSub: "The Managed Marketplace for Verified Sales",
-            cta: "List Your Product",
-            loading: "Loading Products..."
+            heroTitle: "Trusted Market to Buy & Sell",
+            heroSub: "Verified products for you, managed with care",
+            cta: "Sell Product",
+            loading: "Finding Products..."
         },
         dashboard: {
-            title: "Manager Dashboard",
-            potentialNet: "Potential Net",
+            title: "My Dashboard",
+            potentialNet: "Total Earning",
             status: "Status"
         },
         form: {
-            title: "List Your Product",
-            submit: "Submit for Verification",
+            title: "Sell Your Product",
+            submit: "Post for Approval",
             labels: {
                 name: "Product Name",
-                price: "Global Product Price (৳)",
-                category: "Category Registry",
-                description: "Product Description & Condition Audit"
+                price: "Selling Price (৳)",
+                category: "Choose Category",
+                description: "Describe your product"
             }
         },
         admin: {
-            title: "Manager Center",
+            title: "Admin Panel",
             finance: "Finance",
-            verification: "Verification",
-            entities: "System Entities"
+            verification: "Approve Items",
+            entities: "System Info"
         }
     },
     bn: {

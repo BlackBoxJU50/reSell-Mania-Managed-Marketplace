@@ -3,22 +3,22 @@ const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
-        console.log(`[AUTH] Registration attempt for: ${email}`);
+        const { name, phone, email, password, role } = req.body;
+        console.log(`[AUTH] Registration attempt for phone: ${phone}`);
 
         if (!process.env.JWT_SECRET) {
             console.error('[AUTH] CRITICAL: JWT_SECRET is missing from environment variables!');
         }
 
-        let user = await User.findOne({ email });
-        if (user) return res.status(400).json({ message: 'User already exists' });
+        let user = await User.findOne({ phone });
+        if (user) return res.status(400).json({ message: 'Phone number already registered' });
 
-        user = new User({ name, email, password, role: role || 'participant' });
+        user = new User({ name, phone, email, password, role: role || 'participant' });
         await user.save();
-        console.log(`[AUTH] User created successfully: ${email}`);
+        console.log(`[AUTH] User created successfully: ${phone}`);
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+        res.json({ token, user: { id: user._id, name: user.name, phone: user.phone, role: user.role } });
     } catch (err) {
         console.error('Registration Error Details:', err);
         res.status(500).json({ 
@@ -30,15 +30,15 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+        const { phone, password } = req.body;
+        const user = await User.findOne({ phone });
+        if (!user) return res.status(400).json({ message: 'Invalid phone or password' });
 
         const isMatch = await user.comparePassword(password);
-        if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+        if (!isMatch) return res.status(400).json({ message: 'Invalid phone or password' });
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+        res.json({ token, user: { id: user._id, name: user.name, phone: user.phone, role: user.role } });
     } catch (err) {
         console.error('Login Error:', err);
         res.status(500).json({ 

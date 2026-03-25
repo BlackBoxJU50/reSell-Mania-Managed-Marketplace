@@ -18,6 +18,8 @@ const Products = () => {
 
     const [searchQuery, setSearchQuery] = useState(initialSearch);
     const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+    const [minPrice, setMinPrice] = useState('');
+    const [maxPrice, setMaxPrice] = useState('');
 
     // Sync state when URL params change (e.g. clicking category nav)
     useEffect(() => {
@@ -46,30 +48,32 @@ const Products = () => {
     const filteredAssets = assets.filter(asset => {
         const matchesSearch = asset.title.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = selectedCategory === 'all' || asset.category === selectedCategory;
-        return matchesSearch && matchesCategory;
+        const matchesMinPrice = minPrice === '' || asset.price >= Number(minPrice);
+        const matchesMaxPrice = maxPrice === '' || asset.price <= Number(maxPrice);
+        return matchesSearch && matchesCategory && matchesMinPrice && matchesMaxPrice;
     });
 
     return (
         <div className="space-y-8">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm">
                 <div>
-                    <h1 className="text-3xl font-black text-primary tracking-tighter">Market Archives</h1>
-                    <p className="text-gray-400 text-sm font-medium mt-1 uppercase tracking-widest">Protocol Stream: All Verified Assets</p>
+                    <h1 className="text-3xl font-black text-primary tracking-tighter uppercase">Find Your Deal</h1>
+                    <p className="text-gray-400 text-[10px] font-black mt-1 uppercase tracking-[0.2em]">All Verified Products</p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 flex-grow max-w-2xl">
-                    <div className="relative flex-grow">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-grow max-w-5xl">
+                    <div className="relative">
                         <input
                             type="text"
-                            placeholder="Search catalog..."
-                            className="amazon-input pr-10"
+                            placeholder="What are you looking for?"
+                            className="amazon-input pr-10 font-bold"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
                     </div>
                     <select
-                        className="amazon-input sm:max-w-[200px]"
+                        className="amazon-input font-bold"
                         value={selectedCategory}
                         onChange={(e) => setSelectedCategory(e.target.value)}
                     >
@@ -80,6 +84,28 @@ const Products = () => {
                             </option>
                         ))}
                     </select>
+                    <div className="flex gap-2">
+                        <input
+                            type="number"
+                            placeholder="Min Price"
+                            className="amazon-input font-bold w-1/2 text-xs"
+                            value={minPrice}
+                            onChange={(e) => setMinPrice(e.target.value)}
+                        />
+                        <input
+                            type="number"
+                            placeholder="Max Price"
+                            className="amazon-input font-bold w-1/2 text-xs"
+                            value={maxPrice}
+                            onChange={(e) => setMaxPrice(e.target.value)}
+                        />
+                    </div>
+                    <button 
+                        onClick={() => { setSearchQuery(''); setSelectedCategory('all'); setMinPrice(''); setMaxPrice(''); }}
+                        className="bg-gray-50 text-gray-400 hover:bg-gray-100 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors"
+                    >
+                        Clear All
+                    </button>
                 </div>
             </header>
 

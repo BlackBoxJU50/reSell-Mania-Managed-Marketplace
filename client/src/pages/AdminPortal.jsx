@@ -19,6 +19,8 @@ const AdminPortal = () => {
     const [systemHealth, setSystemHealth] = useState(null);
     const [loading, setLoading] = useState(true);
     const [counts, setCounts] = useState({ pendingAssets: 0, pendingOrders: 0 });
+    const [editingAsset, setEditingAsset] = useState(null);
+    const [editForm, setEditForm] = useState({ title: '', price: '', description: '', category: '' });
 
     useEffect(() => {
         api.get('/admin/counts')
@@ -144,6 +146,29 @@ const AdminPortal = () => {
             setAllAssets(allAssets.filter(a => a._id !== id));
         } catch (err) {
             alert('Asset deletion failed');
+        }
+    };
+
+    const startEditing = (asset) => {
+        setEditingAsset(asset);
+        setEditForm({
+            title: asset.title,
+            price: asset.price,
+            description: asset.description,
+            category: asset.category
+        });
+    };
+
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await api.patch(`/admin/assets/${editingAsset._id}`, editForm);
+            setPendingAssets(pendingAssets.map(a => a._id === editingAsset._id ? res.data : a));
+            setAllAssets(allAssets.map(a => a._id === editingAsset._id ? res.data : a));
+            setEditingAsset(null);
+            alert('Asset updated successfully');
+        } catch (err) {
+            alert('Failed to update asset');
         }
     };
 
@@ -318,6 +343,12 @@ const AdminPortal = () => {
                                                 Approve
                                             </button>
                                             <button 
+                                                onClick={() => startEditing(asset)}
+                                                className="bg-primary text-accent px-3 rounded text-xs font-bold hover:bg-secondary transition-colors"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button 
                                                 onClick={() => window.open(`/asset/${asset._id}`, '_blank')}
                                                 className="bg-gray-100 text-gray-400 px-3 rounded text-xs font-bold hover:bg-accent hover:text-primary transition-colors"
                                             >
@@ -386,7 +417,7 @@ const AdminPortal = () => {
                                     <thead className="text-[10px] uppercase bg-gray-50 text-gray-400 font-black">
                                         <tr>
                                             <th className="px-6 py-3">Member Name</th>
-                                            <th className="px-6 py-3">Email Protocol</th>
+                                            <th className="px-6 py-3">Phone Number</th>
                                             <th className="px-6 py-3">Hierarchy</th>
                                             <th className="px-6 py-3">Rating</th>
                                             <th className="px-6 py-3 text-right">Actions</th>
@@ -396,7 +427,7 @@ const AdminPortal = () => {
                                         {allUsers.map((user) => (
                                             <tr key={user._id} className="hover:bg-gray-50 transition-colors">
                                                 <td className="px-6 py-4 font-bold text-primary">{user.name}</td>
-                                                <td className="px-6 py-4 text-gray-500">{user.email}</td>
+                                                <td className="px-6 py-4 text-gray-500 font-mono">{user.phone || 'N/A'}</td>
                                                 <td className="px-6 py-4">
                                                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${user.role === 'admin' ? 'bg-primary text-accent' : 'bg-gray-100 text-gray-500'}`}>
                                                         {user.role}
@@ -590,6 +621,65 @@ const AdminPortal = () => {
                     </section>
                 )
             }
+            {editingAsset && (
+                <div className="fixed inset-0 bg-primary/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl"
+                    >
+                        <header className="bg-gray-50 px-8 py-6 border-b border-gray-100 flex justify-between items-center">
+                            <h2 className="text-xl font-black text-primary uppercase tracking-tighter">Edit Product Details</h2>
+                            <button onClick={() => setEditingAsset(null)} className="text-gray-400 hover:text-primary"><X size={24} /></button>
+                        </header>
+                        <form onSubmit={handleEditSubmit} className="p-8 space-y-5">
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Product Name</label>
+                                <input 
+                                    className="amazon-input bg-gray-50 border-none font-bold placeholder:text-gray-300"
+                                    value={editForm.title}
+                                    onChange={(e) => setEditForm({...editForm, title: e.target.value})}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Product Price (৳)</label>
+                                <input 
+                                    type="number"
+                                    className="amazon-input bg-gray-50 border-none font-bold placeholder:text-gray-300"
+                                    value={editForm.price}
+                                    onChange={(e) => setEditForm({...editForm, price: e.target.value})}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Product Category</label>
+                                <select 
+                                    className="amazon-input bg-gray-50 border-none font-bold"
+                                    value={editForm.category}
+                                    onChange={(e) => setEditForm({...editForm, category: e.target.value})}
+                                    required
+                                >
+                                    {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Condition & Notes</label>
+                                <textarea 
+                                    className="amazon-input bg-gray-50 border-none font-bold h-32 resize-none"
+                                    value={editForm.description}
+                                    onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                                    required
+                                />
+                            </div>
+                            <div className="flex gap-4 pt-4">
+                                <button type="button" onClick={() => setEditingAsset(null)} className="flex-grow py-4 rounded-xl font-black uppercase text-xs tracking-widest bg-gray-100 text-gray-400">Cancel</button>
+                                <button type="submit" className="flex-grow py-4 rounded-xl font-black uppercase text-xs tracking-widest bg-accent text-primary shadow-lg shadow-accent/20">Save Changes</button>
+                            </div>
+                        </form>
+                    </motion.div>
+                </div>
+            )}
         </div >
     );
 };

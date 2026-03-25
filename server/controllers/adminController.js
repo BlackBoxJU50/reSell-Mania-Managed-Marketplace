@@ -41,6 +41,21 @@ exports.deleteAsset = async (req, res) => {
     }
 };
 
+exports.updateAsset = async (req, res) => {
+    try {
+        const { title, description, price, category, status } = req.body;
+        const asset = await Asset.findByIdAndUpdate(
+            req.params.id,
+            { title, description, price, category, status },
+            { new: true }
+        );
+        if (!asset) return res.status(404).json({ message: 'Asset not found' });
+        res.json(asset);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 // System Stats (Advanced)
 exports.getSystemHealth = async (req, res) => {
     try {

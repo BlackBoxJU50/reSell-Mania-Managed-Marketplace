@@ -58,9 +58,9 @@ const UserDashboard = () => {
         <div className="space-y-6 md:space-y-8 px-2 md:px-0">
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gray-100 pb-8">
                 <div className="space-y-2">
-                    <h1 className="text-3xl md:text-4xl font-black text-primary tracking-tighter">{t('dashboard.title')}</h1>
+                    <h1 className="text-3xl md:text-4xl font-black text-primary tracking-tighter">My Account</h1>
                     <p className="text-xs md:text-sm text-gray-400 font-bold uppercase tracking-widest">
-                        Manage your products and verified purchases
+                        Track your sales and orders
                     </p>
                 </div>
                 <div className="flex bg-gray-50 p-1 rounded-xl border border-gray-100 self-start">
@@ -68,13 +68,13 @@ const UserDashboard = () => {
                         onClick={() => setActiveView('listings')}
                         className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeView === 'listings' ? 'bg-white text-primary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-primary'}`}
                     >
-                        My Products ({listings.length})
+                        My Items ({listings.length})
                     </button>
                     <button
                         onClick={() => setActiveView('orders')}
                         className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeView === 'orders' ? 'bg-white text-primary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-primary'}`}
                     >
-                        My Orders ({orders.length})
+                        My Purchases ({orders.length})
                     </button>
                 </div>
             </header>
@@ -110,7 +110,7 @@ const UserDashboard = () => {
                                         <p className="text-2xl font-black text-primary">৳{asset.price.toLocaleString()}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-1">{t('dashboard.potentialNet')} (90%)</p>
+                                        <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-1">You will get</p>
                                         <p className="text-lg font-black text-success tracking-tighter">৳{(asset.price * 0.9).toLocaleString()}</p>
                                     </div>
                                 </div>
@@ -120,7 +120,7 @@ const UserDashboard = () => {
                                             <ShieldCheck size={16} className="text-accent" />
                                         </div>
                                         <p className="text-[10px] text-primary/70 font-bold leading-snug">
-                                            Your product is currently being audited by a Manager.
+                                            Our team is checking your product. It will be live soon!
                                         </p>
                                     </div>
                                 )}

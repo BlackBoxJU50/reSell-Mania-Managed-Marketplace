@@ -72,6 +72,8 @@ const LiquidationForm = () => {
         }
     };
 
+    const [agreed, setAgreed] = useState(false);
+
     if (submitSuccess) {
         return (
             <div className="max-w-2xl mx-auto py-20 px-4">
@@ -82,24 +84,24 @@ const LiquidationForm = () => {
                         </svg>
                     </div>
                     <div className="space-y-4">
-                        <h2 className="text-4xl font-black text-primary uppercase tracking-tighter">Asset Registered</h2>
-                        <p className="text-gray-400 font-bold uppercase text-xs tracking-widest">Formal Verification Protocol Initiated</p>
+                        <h2 className="text-4xl font-black text-primary uppercase tracking-tighter">Post Submitted!</h2>
+                        <p className="text-gray-400 font-bold uppercase text-xs tracking-widest">Verification in progress</p>
                     </div>
                     <p className="text-gray-500 font-medium leading-relaxed max-w-sm">
-                        Your product has been submitted to the Manager queue for audit. You will be notified once the verification is complete.
+                        Your product has been sent for approval. It will be live on the marketplace soon!
                     </p>
                     <div className="flex gap-4 w-full">
                         <button 
                             onClick={() => navigate('/dashboard')}
                             className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-secondary transition-colors"
                         >
-                            Monitor Status
+                            My Dashboard
                         </button>
                         <button 
                             onClick={() => navigate('/')}
                             className="flex-1 bg-gray-100 text-gray-500 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-gray-200 transition-colors"
                         >
-                            Return Home
+                            Back Home
                         </button>
                     </div>
                 </div>
@@ -111,17 +113,17 @@ const LiquidationForm = () => {
         <div className="max-w-2xl mx-auto py-8 px-4">
             <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-xl space-y-8">
                 <header className="space-y-2 border-b border-gray-50 pb-6">
-                    <h1 className="text-3xl font-black text-primary tracking-tighter">{t('form.title')}</h1>
-                    <p className="text-[10px] font-black text-accent uppercase tracking-widest">Formal Verification Protocol Required</p>
+                    <h1 className="text-3xl font-black text-primary tracking-tighter">Sell Your Product</h1>
+                    <p className="text-[10px] font-black text-accent uppercase tracking-widest">Post your item for approval</p>
                 </header>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('form.labels.name')}</label>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Product Name</label>
                         <input
                             required
                             type="text"
-                            placeholder="e.g. MacBook Pro 2023 M2 Max"
+                            placeholder="e.g. iPhone 15 Pro Max"
                             className="amazon-input bg-gray-50 border-none font-bold placeholder:text-gray-300 py-4 px-6 rounded-2xl"
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         />
@@ -129,7 +131,7 @@ const LiquidationForm = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('form.labels.price')}</label>
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Selling Price (৳)</label>
                             <input
                                 required
                                 type="number"
@@ -139,7 +141,7 @@ const LiquidationForm = () => {
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('form.labels.category')}</label>
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Choose Category</label>
                             <select
                                 className="amazon-input bg-gray-50 border-none font-bold py-4 px-6 rounded-2xl appearance-none"
                                 value={formData.category}
@@ -147,34 +149,27 @@ const LiquidationForm = () => {
                             >
                                 {categories.map((cat) => (
                                     <option key={cat._id} value={cat.name}>
-                                        {t(`nav.categories.${cat.name.toLowerCase().replace(' ', '')}`) || cat.name}
+                                        {language === 'bn' ? cat.bnName : cat.name}
                                     </option>
                                 ))}
-                                {categories.length === 0 && (
-                                    <>
-                                        <option value="Electronics">{t('nav.categories.electronics')}</option>
-                                        <option value="Mens Wear">{t('nav.categories.mensWear')}</option>
-                                        <option value="Womens Wear">{t('nav.categories.womensWear')}</option>
-                                    </>
-                                )}
                             </select>
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('form.labels.description')}</label>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Describe your product</label>
                         <textarea
                             required
                             rows="4"
-                            placeholder="Detail everything. Transparency is required for Manager approval..."
+                            placeholder="Tell us about condition and usage..."
                             className="amazon-input bg-gray-50 border-none font-bold py-4 px-6 rounded-2xl resize-none"
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         ></textarea>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-gray-50">
                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Product Images (Up to 5)</label>
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Photos (Max 5)</label>
                             <div className="flex flex-wrap gap-2">
                                 <label className="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors">
                                     <span className="text-xl text-gray-400">+</span>
@@ -196,11 +191,11 @@ const LiquidationForm = () => {
                         </div>
 
                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Product Video Demo (Short)</label>
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Quick Video Demo</label>
                             <div className="flex items-center gap-4">
-                                <label className="flex-1 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl py-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors">
-                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                        {selectedVideo ? selectedVideo.name.slice(0, 15) + '...' : 'Click to Upload Video'}
+                                <label className="flex-1 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl py-2 px-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors">
+                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center truncate w-32">
+                                        {selectedVideo ? selectedVideo.name : 'Choose Video'}
                                     </span>
                                     <input
                                         type="file"
@@ -216,28 +211,32 @@ const LiquidationForm = () => {
                         </div>
                     </div>
 
-                    <div className="bg-primary p-6 rounded-2xl text-white space-y-4">
-                        <div className="flex justify-between items-center text-xs border-b border-white/10 pb-4">
-                            <span className="font-bold opacity-60">Platform Protocol Fee</span>
-                            <span className="font-black text-accent">-10%</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <span className="text-sm font-black uppercase tracking-widest italic">Net Result</span>
-                            <span className="text-xl font-black text-accent">৳ {(formData.price * 0.9).toLocaleString()}</span>
-                        </div>
+                    <div className="space-y-4">
+                        <p className="text-[10px] font-bold text-gray-500 italic">
+                             Note: reSell Mania keeps <span className="text-primary font-black">10% commission</span> for every successful sale.
+                        </p>
+                        
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                            <input 
+                                type="checkbox" 
+                                required 
+                                className="w-5 h-5 rounded border-gray-300 text-accent focus:ring-accent"
+                                checked={agreed}
+                                onChange={(e) => setAgreed(e.target.checked)}
+                            />
+                            <span className="text-xs font-bold text-gray-600 group-hover:text-primary transition-colors">
+                                I agree to reSell Mania's Seller Policy.
+                            </span>
+                        </label>
                     </div>
 
                     <button
                         type="submit"
-                        disabled={loading || uploading}
+                        disabled={loading || uploading || !agreed}
                         className="w-full bg-accent text-primary py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-xs shadow-lg hover:bg-accent-hover active:scale-95 transition-all disabled:opacity-50"
                     >
-                        {uploading ? 'Processing Media Vault...' : loading ? 'Transmitting Data...' : t('form.submit')}
+                        {uploading ? 'Processing...' : loading ? 'Posting...' : 'Post Product Now'}
                     </button>
-
-                    <p className="text-[9px] text-gray-400 text-center font-bold uppercase leading-relaxed px-12">
-                        By submitting, you agree to the Manager's right to audit all legal documentation associated with this product.
-                    </p>
                 </form>
             </div>
         </div>

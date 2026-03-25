@@ -72,8 +72,21 @@ const AssetDetails = () => {
         }
     };
 
-    if (loading) return <div className="p-8 text-center">Opening Vault...</div>;
-    if (!asset) return <div className="p-8 text-center">Asset not found.</div>;
+    const [orderAgreed, setOrderAgreed] = useState(false);
+
+    if (loading) return (
+        <div className="p-20 text-center space-y-4">
+            <div className="w-12 h-12 border-4 border-accent border-t-primary rounded-full animate-spin mx-auto"></div>
+            <p className="text-gray-400 font-black uppercase tracking-widest text-xs">Loading Details...</p>
+        </div>
+    );
+    if (!asset) return (
+        <div className="p-20 text-center space-y-4">
+            <X size={48} className="mx-auto text-red-100" />
+            <p className="text-gray-400 font-black uppercase tracking-widest text-xs">Product not found</p>
+            <button onClick={() => navigate('/')} className="text-accent font-bold hover:underline">Back to Home</button>
+        </div>
+    );
 
     if (orderSuccess) {
         return (
@@ -82,24 +95,24 @@ const AssetDetails = () => {
                     <ShieldCheck size={40} />
                 </div>
                 <div className="text-center space-y-2">
-                    <h2 className="text-3xl font-black text-primary uppercase tracking-tighter">Order Placed Successfully!</h2>
-                    <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em]">Transmission Successful • Queue Status: Pending</p>
+                    <h2 className="text-3xl font-black text-primary uppercase tracking-tighter text-success">Order Placed!</h2>
+                    <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em]">Verified • Our team will call you soon</p>
                 </div>
-                <p className="max-w-xs text-center text-sm text-gray-500 font-medium">
-                    Your order has been recorded in the protocol. A Manager will verify and ship your asset shortly.
+                <p className="max-w-xs text-center text-sm text-gray-500 font-medium leading-relaxed">
+                    Great choice! We have received your order. Our manager will verify the details and contact you for delivery.
                 </p>
-                <div className="flex gap-4">
+                <div className="flex gap-4 w-full max-w-xs">
                     <button 
                         onClick={() => navigate('/dashboard')}
-                        className="bg-primary text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-secondary transition-colors"
+                        className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-secondary transition-colors"
                     >
-                        View Orders
+                        My Dashboard
                     </button>
                     <button 
                         onClick={() => navigate('/')}
-                        className="bg-gray-100 text-gray-600 px-8 py-3 rounded-xl font-bold text-sm hover:bg-gray-200 transition-colors"
+                        className="flex-1 bg-gray-100 text-gray-600 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-gray-200 transition-colors"
                     >
-                        Continue Shopping
+                        Keep Shopping
                     </button>
                 </div>
             </div>
@@ -133,7 +146,7 @@ const AssetDetails = () => {
                 {asset.productVideo && (
                     <div className="bg-primary p-6 rounded-xl space-y-3">
                         <div className="flex items-center gap-2 text-accent text-xs font-black uppercase tracking-widest">
-                            <Play size={14} fill="currentColor" /> Video Demonstration
+                            <Play size={14} fill="currentColor" /> Watch Video Demo
                         </div>
                         <video
                             controls
@@ -146,36 +159,35 @@ const AssetDetails = () => {
 
             {/* Info Section */}
             <div className="md:col-span-6 lg:col-span-4 space-y-6">
-                <div className="space-y-2">
-                    <p className="text-sm text-blue-600 hover:underline cursor-pointer">Visit the reSell Mania Verified Store</p>
-                    <h1 className="text-3xl font-medium leading-tight">{asset.title}</h1>
+                <div className="space-y-4">
+                    <span className="text-[10px] font-black bg-success/10 text-success px-3 py-1 rounded-full uppercase tracking-widest border border-success/20">reSell Mania Verified</span>
+                    <h1 className="text-4xl font-black text-primary tracking-tighter leading-none">{asset.title}</h1>
                     <div className="flex items-center gap-4 py-2 border-y border-gray-100">
-                        <div className="flex items-center text-xs font-bold text-success gap-1 uppercase">
-                            <ShieldCheck size={16} /> Custodian Verified
-                        </div>
-                        <div className="text-xs text-gray-500">Seller: <span className="text-primary font-medium">{asset.seller?.name || 'Authorized Member'}</span></div>
+                        <div className="text-xs text-gray-500 font-bold uppercase">Seller: <span className="text-accent font-black tracking-widest">{asset.seller?.name || 'Verified Member'}</span></div>
                     </div>
                 </div>
 
                 <div className="space-y-1">
-                    <p className="text-gray-500 text-sm">Suggested Price</p>
+                    <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Price in BDT</p>
                     <div className="flex items-baseline gap-2">
-                        <p className="text-4xl font-light text-primary tracking-tighter">৳{asset.price.toLocaleString()}</p>
+                        <p className="text-5xl font-black text-primary tracking-tighter">৳{asset.price.toLocaleString()}</p>
                     </div>
-                    <p className="text-xs text-gray-500">Includes secure escrow fee and custodian verification guarantee.</p>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wide">Secure escrow & Quality Guarantee included.</p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="font-bold">About this asset</h3>
-                    <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">{asset.description}</p>
+                <div className="space-y-4 bg-gray-50 p-6 rounded-2xl">
+                    <h3 className="text-xs font-black uppercase tracking-widest text-primary border-b border-gray-200 pb-2">Description</h3>
+                    <p className="text-sm leading-relaxed text-gray-600 font-medium whitespace-pre-wrap">{asset.description}</p>
                 </div>
             </div>
 
             {/* Checkout Card */}
             <div className="md:col-span-12 lg:col-span-2 space-y-4">
-                <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm sticky top-24">
-                    <div className="text-2xl font-bold mb-4">৳{asset.price.toLocaleString()}</div>
-                    <p className="text-xs mb-4 text-success font-bold flex items-center gap-1"><Truck size={14} /> FREE Standard Shipping</p>
+                <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-xl shadow-gray-200/50 sticky top-24 space-y-6">
+                    <div>
+                        <div className="text-3xl font-black text-primary tracking-tighter">৳{asset.price.toLocaleString()}</div>
+                        <p className="text-[10px] mt-1 text-success font-black uppercase tracking-widest flex items-center gap-1"><Truck size={12} /> Fast Delivery</p>
+                    </div>
 
                     <button 
                         onClick={() => {
@@ -185,15 +197,15 @@ const AssetDetails = () => {
                                 setShowOrderForm(true);
                             }
                         }} 
-                        className="premium-button w-full mb-3 py-3 text-sm flex items-center justify-center gap-2"
+                        className="w-full bg-accent text-primary py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-accent/20 hover:scale-[1.02] active:scale-95 transition-all"
                     >
-                        Order Now
+                        Buy it Now
                     </button>
 
-                    <div className="space-y-3 pt-4 border-t border-gray-100">
-                        <div className="flex gap-3 text-[10px] text-gray-500">
-                            <Lock size={16} className="shrink-0" />
-                            <span><strong>Secure Transaction</strong> - Professional escrow system.</span>
+                    <div className="space-y-4 pt-4 border-t border-gray-50">
+                        <div className="flex gap-3 text-[9px] text-gray-400 font-black uppercase leading-tight">
+                            <Lock size={14} className="shrink-0 text-primary" />
+                            <span>Safe Transaction Guarantee</span>
                         </div>
                     </div>
                 </div>
@@ -201,14 +213,14 @@ const AssetDetails = () => {
 
             {/* Order Form Modal */}
             {showOrderForm && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-                        <div className="bg-primary p-6 text-white flex justify-between items-center">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm">
+                    <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden">
+                        <div className="bg-gray-50 p-8 border-b border-gray-100 flex justify-between items-center text-primary">
                             <div>
-                                <h2 className="text-xl font-black uppercase tracking-tighter">Confirm Order</h2>
-                                <p className="text-[10px] text-accent font-bold uppercase tracking-widest">Market Protocol Verification</p>
+                                <h2 className="text-2xl font-black uppercase tracking-tighter">Delivery Details</h2>
+                                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Confirm your order address</p>
                             </div>
-                            <button onClick={() => setShowOrderForm(false)} className="hover:rotate-90 transition-transform">
+                            <button onClick={() => setShowOrderForm(false)} className="text-gray-300 hover:text-primary transition-colors">
                                 <X size={24} />
                             </button>
                         </div>
@@ -216,11 +228,11 @@ const AssetDetails = () => {
                         <form onSubmit={handleOrder} className="p-8 space-y-6">
                             <div className="space-y-4">
                                 <div className="space-y-1">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Full Name</label>
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Name</label>
                                     <input
                                         required
                                         type="text"
-                                        className="amazon-input text-sm font-bold"
+                                        className="amazon-input text-sm font-bold bg-gray-50 border-none"
                                         value={shippingInfo.name}
                                         onChange={(e) => setShippingInfo({ ...shippingInfo, name: e.target.value })}
                                     />
@@ -230,17 +242,17 @@ const AssetDetails = () => {
                                     <input
                                         required
                                         type="tel"
-                                        className="amazon-input text-sm font-bold"
+                                        className="amazon-input text-sm font-bold bg-gray-50 border-none"
                                         value={shippingInfo.phone}
                                         onChange={(e) => setShippingInfo({ ...shippingInfo, phone: e.target.value })}
                                     />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Delivery Location</label>
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Delivery Address</label>
                                     <textarea
                                         required
                                         rows="2"
-                                        className="amazon-input text-sm font-bold resize-none"
+                                        className="amazon-input text-sm font-bold bg-gray-50 border-none resize-none"
                                         value={shippingInfo.location}
                                         onChange={(e) => setShippingInfo({ ...shippingInfo, location: e.target.value })}
                                     ></textarea>
@@ -248,29 +260,44 @@ const AssetDetails = () => {
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Payment Method</label>
                                     <select
-                                        className="amazon-input text-sm font-bold"
+                                        className="amazon-input text-sm font-bold bg-gray-50 border-none appearance-none"
                                         value={shippingInfo.paymentMethod}
                                         onChange={(e) => setShippingInfo({ ...shippingInfo, paymentMethod: e.target.value })}
                                     >
                                         <option>Cash on Delivery</option>
-                                        <option>Mobile Banking (Bkash/Nagad)</option>
+                                        <option>Bkash / Nagad</option>
                                         <option>Bank Transfer</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <div className="bg-gray-50 p-4 rounded-2xl flex justify-between items-center">
-                                <span className="text-xs font-black uppercase text-gray-400">Total Payable</span>
-                                <span className="text-xl font-black text-primary">৳{asset.price.toLocaleString()}</span>
+                            <div className="bg-primary/5 p-4 rounded-2xl flex justify-between items-center">
+                                <span className="text-xs font-black uppercase text-gray-400">Total Price</span>
+                                <span className="text-xl font-black text-primary tracking-tighter">৳{asset.price.toLocaleString()}</span>
                             </div>
 
-                            <button
-                                type="submit"
-                                disabled={orderLoading}
-                                className="w-full bg-accent text-primary py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg hover:bg-accent-hover active:scale-95 transition-all disabled:opacity-50"
-                            >
-                                {orderLoading ? 'Processing Order...' : 'Confirm Delivery Protocol'}
-                            </button>
+                            <div className="space-y-4 pt-2">
+                                <label className="flex items-start gap-3 cursor-pointer group">
+                                    <input 
+                                        type="checkbox" 
+                                        required 
+                                        className="mt-1 w-5 h-5 rounded border-gray-300 text-accent focus:ring-accent"
+                                        checked={orderAgreed}
+                                        onChange={(e) => setOrderAgreed(e.target.checked)}
+                                    />
+                                    <span className="text-[10px] font-bold text-gray-500 group-hover:text-primary transition-colors leading-tight">
+                                        I agree to reSell Mania's Purchase & Verification Policy. I understand that a manager will verify the item before delivery.
+                                    </span>
+                                </label>
+
+                                <button
+                                    type="submit"
+                                    disabled={orderLoading || !orderAgreed}
+                                    className="w-full bg-accent text-primary py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg hover:shadow-accent/20 active:scale-95 transition-all disabled:opacity-50"
+                                >
+                                    {orderLoading ? 'Processing...' : 'Confirm My Order'}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

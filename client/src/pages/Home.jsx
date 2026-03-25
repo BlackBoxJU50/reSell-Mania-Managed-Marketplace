@@ -48,10 +48,10 @@ const Home = () => {
                     <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">{t('home.heroTitle')}</h1>
                     <p className="text-sm md:text-lg opacity-80 font-medium">{t('home.heroSub')}</p>
                     <div className="flex flex-col sm:flex-row gap-4">
-                        <Link to="/sell" className="premium-button text-center">{t('home.cta')}</Link>
-                        <button className="bg-white/10 hover:bg-white/20 px-8 py-3 rounded-lg transition-colors font-bold text-sm border border-white/20 uppercase tracking-widest">
-                            Explore
-                        </button>
+                        <Link to="/sell" className="premium-button text-center">Sell Product</Link>
+                        <Link to="/all" className="bg-white/10 hover:bg-white/20 px-8 py-3 rounded-lg transition-colors font-bold text-sm border border-white/20 uppercase tracking-widest text-center">
+                            Explore Product
+                        </Link>
                     </div>
                 </div>
                 <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-accent/20 to-transparent blur-3xl hidden md:block"></div>
