@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #131921;
+  /* Amazon Dark */
+  --color-secondary: #232f3e;
+  --color-accent: #febd69;
+  /* Amazon Orange */
+  --color-accent-hover: #f3a847;
+  --color-success: #008a00;
+  --color-background: #f3f3f3;
+  --color-card-bg: #ffffff;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  background-color: var(--color-background);
+  color: var(--color-primary);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.premium-button {
+  @apply bg-accent hover:bg-accent-hover text-primary font-medium py-2 px-6 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md active:scale-95;
+}
+
+.amazon-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all;
+}
