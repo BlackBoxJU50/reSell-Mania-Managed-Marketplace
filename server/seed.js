@@ -6,55 +6,73 @@ const Transaction = require('./models/Transaction');
 require('dotenv').config();
 
 const categories = [
-    { name: 'Electronics', bnName: 'ইলেকট্রনিক্স' },
-    { name: 'Mens Wear', bnName: 'ছেলেদের পোশাক' },
-    { name: 'Womens Wear', bnName: 'মেয়েদের পোশাক' },
+    // Electronics
+    { name: 'Mobiles', bnName: 'মোবাইল' },
+    { name: 'Laptops & Computers', bnName: 'ল্যাপটপ ও কম্পিউটার' },
+    { name: 'Cameras & Gadgets', bnName: 'ক্যামেরা ও গ্যাজেট' },
+    { name: 'Audio & Entertainment', bnName: 'অডিও ও বিনোদন' },
+    // Fashion
+    { name: 'Mens Fashion', bnName: 'ছেলের পোশাক' },
+    { name: 'Womens Fashion', bnName: 'মেয়েদের পোশাক' },
+    { name: 'Watches & Accessories', bnName: 'ঘড়ি ও অ্যাক্সেসরিজ' },
+    // Home & Living
     { name: 'Furniture', bnName: 'আসবাবপত্র' },
-    { name: 'Craft', bnName: 'হস্তশিল্প' },
-    { name: 'Agriculture', bnName: 'কৃষি' }
+    { name: 'Home Appliances', bnName: 'গৃহ সরঞ্জাম' },
+    { name: 'Kitchenware', bnName: 'রান্নাঘরের সরঞ্জাম' },
+    // Lifestyle
+    { name: 'Books & Stationery', bnName: 'বই ও স্টেশনারি' },
+    { name: 'Musical Instruments', bnName: 'বাদ্যযন্ত্র' },
+    { name: 'Sports & Fitness', bnName: 'খেলাধুলা ও ফিটনেস' },
+    { name: 'Toys & Games', bnName: 'খেলনা ও গেম' },
+    // Vehicles
+    { name: 'Vehicles & Parts', bnName: 'যানবাহন ও যন্ত্রাংশ' },
+    // Business & Industry
+    { name: 'Industrial Tools', bnName: 'শিল্প কারখানা সরঞ্জাম' },
+    // Agriculture
+    { name: 'Agriculture', bnName: 'কৃষি' },
+    // Others
+    { name: 'Others', bnName: 'অন্যান্য' }
 ];
 
 const dummyProducts = [
     {
-        title: 'MacBook Pro 14" M2 Max',
-        description: 'Elite performance laptop for creative professionals.',
-        category: 'Electronics',
-        price: 2499,
+        title: 'iPhone 15 Pro Max - 256GB',
+        description: 'Brand new, sealed pack. Titanium Blue color.',
+        category: 'Mobiles',
+        price: 145000,
+        condition: 'New',
         status: 'LIVE'
     },
     {
-        title: 'Premium Panjabi - Royal Blue',
-        description: 'Traditional wedding wear with intricate embroidery.',
-        category: 'Mens Wear',
-        price: 45,
+        title: 'MacBook Air M2 Chip',
+        description: 'Used for 2 months, 100% battery health. Midnight color.',
+        category: 'Laptops & Computers',
+        price: 115000,
+        condition: 'Used',
         status: 'LIVE'
     },
     {
-        title: 'Silk Saree - Jamdani Style',
-        description: 'Authentic hand-woven silk saree from Tangail.',
-        category: 'Womens Wear',
-        price: 80,
+        title: 'Sony WH-1000XM5 Headphones',
+        description: 'Brand new, noise canceling flagship headphones.',
+        category: 'Audio & Entertainment',
+        price: 38000,
+        condition: 'New',
         status: 'LIVE'
     },
     {
-        title: 'Teak Wood Dining Table',
-        description: 'Classic 6-seater solid wood table.',
+        title: 'Teak Wood King Sized Bed',
+        description: 'Solid teak wood, 5 years warranty remains. Excellent condition.',
         category: 'Furniture',
-        price: 650,
+        price: 45000,
+        condition: 'Used',
         status: 'LIVE'
     },
     {
-        title: 'Handcrafted Bamboo Basket Set',
-        description: 'Eco-friendly home decor set of 3.',
-        category: 'Craft',
-        price: 25,
-        status: 'LIVE'
-    },
-    {
-        title: 'Organic Tea Leaves (500g)',
-        description: 'Fresh from the gardens of Sylhet.',
+        title: 'Organic Honey (500g)',
+        description: 'Pure forest honey from Sundarbans.',
         category: 'Agriculture',
-        price: 15,
+        price: 850,
+        condition: 'New',
         status: 'LIVE'
     }
 ];

@@ -1,4 +1,5 @@
 const Asset = require('../models/Asset');
+const User = require('../models/User');
 
 exports.createAsset = async (req, res) => {
     try {
@@ -31,7 +32,9 @@ exports.createAsset = async (req, res) => {
 
 exports.getAssets = async (req, res) => {
     try {
-        const assets = await Asset.find({ status: 'LIVE' }).populate('seller', 'name rating');
+        const assets = await Asset.find({ status: 'LIVE' })
+            .populate('seller', 'name rating')
+            .sort({ views: -1 });
         res.json(assets);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -40,8 +43,22 @@ exports.getAssets = async (req, res) => {
 
 exports.getAssetById = async (req, res) => {
     try {
-        const asset = await Asset.findById(req.params.id).populate('seller', 'name rating');
+        let asset = await Asset.findById(req.params.id).populate('seller', 'name rating');
         if (!asset) return res.status(404).json({ message: 'Asset not found' });
+        
+        if (asset.status === 'LIVE') {
+            const viewerId = req.user ? req.user.id : req.ip;
+            if (viewerId && !asset.uniquelyViewedBy.includes(viewerId)) {
+                asset.uniquelyViewedBy.push(viewerId);
+                asset.views = (asset.views || 0) + 1;
+                await asset.save();
+                
+                // Track user activity for analytics
+                if (req.user) {
+                    await User.findByIdAndUpdate(req.user.id, { $inc: { itemsViewedCount: 1 } });
+                }
+            }
+        }
         res.json(asset);
     } catch (err) {
         res.status(500).json({ error: err.message });

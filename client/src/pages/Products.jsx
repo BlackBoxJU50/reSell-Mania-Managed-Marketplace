@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api, { getCachedCategories } from '../utils/api';
 import { motion } from 'framer-motion';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, ShieldCheck } from 'lucide-react';
+import { Search, Filter, ShieldCheck, Eye } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { ProductCardSkeleton } from '../components/Skeleton';
 
@@ -20,6 +20,7 @@ const Products = () => {
     const [selectedCategory, setSelectedCategory] = useState(initialCategory);
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
+    const [selectedCondition, setSelectedCondition] = useState('all');
 
     // Sync state when URL params change (e.g. clicking category nav)
     useEffect(() => {
@@ -50,7 +51,8 @@ const Products = () => {
         const matchesCategory = selectedCategory === 'all' || asset.category === selectedCategory;
         const matchesMinPrice = minPrice === '' || asset.price >= Number(minPrice);
         const matchesMaxPrice = maxPrice === '' || asset.price <= Number(maxPrice);
-        return matchesSearch && matchesCategory && matchesMinPrice && matchesMaxPrice;
+        const matchesCondition = selectedCondition === 'all' || asset.condition === selectedCondition;
+        return matchesSearch && matchesCategory && matchesMinPrice && matchesMaxPrice && matchesCondition;
     });
 
     return (
@@ -100,8 +102,17 @@ const Products = () => {
                             onChange={(e) => setMaxPrice(e.target.value)}
                         />
                     </div>
+                    <select
+                        className="amazon-input font-bold"
+                        value={selectedCondition}
+                        onChange={(e) => setSelectedCondition(e.target.value)}
+                    >
+                        <option value="all">Any Condition</option>
+                        <option value="New">New Only</option>
+                        <option value="Used">Used Only</option>
+                    </select>
                     <button 
-                        onClick={() => { setSearchQuery(''); setSelectedCategory('all'); setMinPrice(''); setMaxPrice(''); }}
+                        onClick={() => { setSearchQuery(''); setSelectedCategory('all'); setMinPrice(''); setMaxPrice(''); setSelectedCondition('all'); }}
                         className="bg-gray-50 text-gray-400 hover:bg-gray-100 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors"
                     >
                         Clear All
@@ -109,44 +120,43 @@ const Products = () => {
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
                 {loading ? (
-                    Array(8).fill(0).map((_, i) => <ProductCardSkeleton key={i} />)
+                    Array(12).fill(0).map((_, i) => <ProductCardSkeleton key={i} />)
                 ) : filteredAssets.length > 0 ? (
                     filteredAssets.map((asset) => (
-                        <motion.div
+                        <Link
                             key={asset._id}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="bg-white group cursor-pointer flex flex-col h-full rounded-xl overflow-hidden hover:shadow-2xl transition-all border border-gray-100"
+                            to={`/asset/${asset._id}`}
+                            className="bg-white group cursor-pointer flex flex-col h-full rounded-lg overflow-hidden transition-all border border-gray-100 hover:border-accent hover:shadow-xl relative"
                         >
-                            <div className="aspect-[4/3] relative overflow-hidden bg-gray-50">
+                            <div className="aspect-square relative overflow-hidden bg-gray-50">
                                 <img
-                                    src={asset.productImages?.[0] || 'https://placehold.co/400x300?text=' + encodeURIComponent(asset.title)}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 font-bold"
+                                    src={asset.productImages?.[0] || 'https://placehold.co/300x300?text=' + encodeURIComponent(asset.title)}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 font-bold"
                                     alt={asset.title}
                                 />
-                                <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded text-[9px] font-black flex items-center gap-1 shadow-sm uppercase tracking-widest text-success border border-success/20">
-                                    <ShieldCheck size={10} /> Verified
+                                <div className="absolute top-1.5 left-1.5 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-[7px] font-black flex items-center gap-0.5 shadow-sm uppercase tracking-tighter text-primary border border-gray-100">
+                                    <Eye size={8} /> {asset.views || 0}
+                                </div>
+                                <div className="absolute top-1.5 right-1.5 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-[7px] font-black shadow-sm uppercase tracking-tighter text-success border border-success/20">
+                                    Verified
                                 </div>
                             </div>
-                            <div className="p-4 space-y-2 flex-grow flex flex-col font-medium">
-                                <h3 className="font-black text-primary group-hover:text-accent transition-colors line-clamp-1">{asset.title}</h3>
-                                <div className="flex justify-between items-center text-[10px] text-gray-400 font-bold">
-                                    <span className="bg-gray-100 px-2 py-0.5 rounded uppercase">{asset.category}</span>
-                                    <span className="text-gray-300">ID: {asset._id.slice(-6)}</span>
+                            <div className="p-3 space-y-1 flex-grow flex flex-col justify-between">
+                                <div>
+                                    <h3 className="font-black text-[11px] text-primary group-hover:text-accent transition-colors line-clamp-2 leading-tight uppercase tracking-tight">{asset.title}</h3>
+                                    <p className="text-[7px] text-gray-400 font-black uppercase tracking-widest mt-0.5">{asset.category}</p>
                                 </div>
-                                <div className="pt-3 mt-auto flex justify-between items-end">
-                                    <p className="text-xl font-black text-primary flex items-start gap-0.5">
-                                        <span className="text-xs font-bold mt-1 tracking-tighter text-gray-400">৳</span>
+                                <div className="pt-2 flex justify-between items-baseline">
+                                    <p className="text-sm font-black text-primary flex items-start">
+                                        <span className="text-[8px] font-bold mt-0.5 mr-0.5 text-gray-400">৳</span>
                                         {asset.price.toLocaleString()}
                                     </p>
-                                    <Link to={`/asset/${asset._id}`} className="bg-primary text-accent px-4 py-2 rounded text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-primary transition-all">
-                                        View Details
-                                    </Link>
+                                    <span className="text-[7px] font-black text-accent opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Detail →</span>
                                 </div>
                             </div>
-                        </motion.div>
+                        </Link>
                     ))
                 ) : (
                     <div className="col-span-full py-24 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">

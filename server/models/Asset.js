@@ -10,11 +10,18 @@ const assetSchema = new mongoose.Schema({
     productImages: [{ type: String }], // Array of image URLs
     productVideo: { type: String }, // Single video URL
     price: { type: Number, required: true },
+    serviceFee: { type: Number, default: 0 }, // Platform commission in BDT
+    condition: { type: String, enum: ['New', 'Used'], default: 'Used' },
     status: {
         type: String,
-        enum: ['PENDING_VERIFICATION', 'LIVE', 'SOLD', 'DELIVERED'],
+        enum: ['PENDING_VERIFICATION', 'LIVE', 'SOLD', 'DELIVERED', 'REJECTED'],
         default: 'PENDING_VERIFICATION'
     },
+    rejectionReason: { type: String },
+    views: { type: Number, default: 0 },
+    uniquelyViewedBy: [{ type: String }],
+    viewedByAdminAt: { type: Date },
+    verifiedAt: { type: Date },
     createdAt: { type: Date, default: Date.now },
 });
 

@@ -157,6 +157,26 @@ const LiquidationForm = () => {
                     </div>
 
                     <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Product Condition</label>
+                        <div className="flex gap-4">
+                            {['Used', 'New'].map((cond) => (
+                                <button
+                                    key={cond}
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, condition: cond })}
+                                    className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all border-2 ${
+                                        formData.condition === cond 
+                                        ? 'bg-accent border-accent text-primary shadow-lg scale-[1.02]' 
+                                        : 'bg-gray-50 border-gray-100 text-gray-400 hover:border-gray-200'
+                                    }`}
+                                >
+                                    {cond} Product
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Describe your product</label>
                         <textarea
                             required
@@ -212,10 +232,6 @@ const LiquidationForm = () => {
                     </div>
 
                     <div className="space-y-4">
-                        <p className="text-[10px] font-bold text-gray-500 italic">
-                             Note: reSell Mania keeps <span className="text-primary font-black">10% commission</span> for every successful sale.
-                        </p>
-                        
                         <label className="flex items-center gap-3 cursor-pointer group">
                             <input 
                                 type="checkbox" 

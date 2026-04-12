@@ -9,6 +9,7 @@
     "build": "npm run build:client",
     "start": "cd server && NODE_ENV=production node index.js",
     "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\"",
+    "seed": "cd server && node seed.js",
     "render-postbuild": "npm run build:client"
   },
   "devDependencies": {

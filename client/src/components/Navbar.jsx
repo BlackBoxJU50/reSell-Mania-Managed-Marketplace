@@ -5,9 +5,7 @@ import api, { getCachedCategories } from '../utils/api';
 import { useLanguage } from '../context/LanguageContext';
 
 const Navbar = () => {
-    const { language, toggleLanguage, t } = useLanguage();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isSearching, setIsSearching] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -38,7 +36,6 @@ const Navbar = () => {
     }, []);
 
     const isAdmin = user?.role === 'admin';
-    const [searchQuery, setSearchQuery] = useState('');
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
@@ -55,97 +52,54 @@ const Navbar = () => {
 
     const isAuthPage = ['/login', '/register'].includes(location.pathname);
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        if (searchQuery.trim()) {
-            navigate(`/all?search=${encodeURIComponent(searchQuery.trim())}`);
-            setIsMenuOpen(false);
-        }
-    };
-
     const handleLogout = () => {
         localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.setItem('user', JSON.stringify({}));
         window.dispatchEvent(new Event('user-login'));
         setIsMenuOpen(false);
         navigate('/login');
     };
 
     return (
-        <nav className="bg-primary text-white sticky top-0 z-50">
-            <div className="container mx-auto px-4">
+        <nav className="bg-[#0F172A] text-white sticky top-0 z-50 border-b border-white/5">
+            <div className="container mx-auto px-6">
                 {/* Top Bar */}
-                <div className="flex items-center justify-between py-2 gap-4">
-                    <Link to="/" className="text-2xl font-black text-accent shrink-0 tracking-tighter">
-                        reSell Mania
+                <div className="flex items-center justify-between py-4 gap-4">
+                    <Link to="/" className="text-2xl font-black text-accent shrink-0 tracking-tighter flex items-center gap-2">
+                        reSell<span className="text-white">MANIA</span>
                     </Link>
 
-                    {/* Desktop Search - Hidden for Manager */}
-                    {!isAdmin && !isAuthPage && (
-                        <form onSubmit={handleSearch} className="flex-grow max-w-2xl hidden md:flex">
-                            <div className="relative w-full">
-                                <input
-                                    type="text"
-                                    placeholder={t('nav.searchPlaceholder')}
-                                    className="w-full py-2 px-4 pr-12 rounded text-primary focus:outline-none text-sm font-medium"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                                <button
-                                    type="submit"
-                                    className="absolute right-0 top-0 h-full px-4 bg-accent rounded-r text-primary hover:bg-accent-hover transition-colors flex items-center justify-center"
-                                >
-                                    {isSearching ? (
-                                        <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-                                    ) : (
-                                        <Search size={18} />
-                                    )}
-                                </button>
-                            </div>
-                        </form>
-                    )}
-
-                    <div className="flex items-center gap-4 md:gap-6">
-                        {/* Language Toggle */}
-                        <button
-                            onClick={toggleLanguage}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary hover:bg-gray-700 transition-colors border border-gray-600"
-                        >
-                            <Globe size={16} className="text-accent" />
-                            <span className="text-xs font-black uppercase tracking-widest">{language === 'en' ? 'BN' : 'EN'}</span>
-                        </button>
-
-                        <div className="hidden md:flex items-center gap-6">
+                    <div className="flex items-center gap-8">
+                        <div className="hidden md:flex items-center gap-8">
                             {!isAdmin && (
-                                <Link to="/sell" className="text-sm font-bold hover:text-accent transition-colors">
+                                <Link to="/sell" className="text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-accent transition-colors">
                                     Sell Product
                                 </Link>
                             )}
 
-                            {user && (
-                                <Link to={isAdmin ? "/" : "/dashboard"} className="text-sm font-bold hover:text-accent transition-colors">
-                                    {isAdmin ? "Manager Panel" : t('nav.dashboard')}
+                            {user?.phone && (
+                                <Link to={isAdmin ? "/" : "/dashboard"} className="text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-accent transition-colors">
+                                    {isAdmin ? "Manager Terminal" : "My Dashboard"}
                                 </Link>
                             )}
 
-                            {user ? (
+                            {user?.phone ? (
                                 <button
                                     onClick={handleLogout}
-                                    className="text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-500 border border-red-900/50 px-3 py-1 rounded bg-red-900/10 transition-colors"
+                                    className="text-[11px] font-black uppercase tracking-widest text-red-500 hover:text-red-400 border border-red-500/20 px-4 py-2 rounded-xl bg-red-500/5 transition-all"
                                 >
                                     Logout
                                 </button>
                             ) : (
-                                <Link to="/login" className="flex items-center gap-1 hover:text-accent transition-colors">
-                                    <User size={20} />
-                                    <span className="text-sm font-bold">{t('nav.account')}</span>
+                                <Link to="/login" className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-accent hover:text-white transition-all">
+                                    <User size={16} />
+                                    <span>Account Access</span>
                                 </Link>
                             )}
 
                             {!isAdmin && (
-                                <Link to="/cart" className="flex items-center gap-1 hover:text-accent transition-colors">
-                                    <ShoppingCart size={20} />
-                                    <span className="text-sm font-bold">{t('nav.cart')}</span>
+                                <Link to="/cart" className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all">
+                                    <ShoppingCart size={18} />
                                 </Link>
                             )}
                         </div>
@@ -159,55 +113,34 @@ const Navbar = () => {
                         </button>
                     </div>
                 </div>
-
-                {/* Mobile Search Bar - Hidden for Manager */}
-                {!isAdmin && !isAuthPage && (
-                    <div className="md:hidden pb-3">
-                        <form onSubmit={handleSearch} className="relative w-full">
-                            <input
-                                type="text"
-                                placeholder={t('nav.searchPlaceholder')}
-                                className="w-full py-2 px-4 pr-10 rounded text-primary focus:outline-none text-xs font-medium"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                            <button
-                                type="submit"
-                                className="absolute right-0 top-0 h-full px-3 bg-accent rounded-r text-primary flex items-center justify-center"
-                            >
-                                <Search size={16} />
-                            </button>
-                        </form>
-                    </div>
-                )}
             </div>
 
             {/* Mobile Sidebar/Menu */}
             {isMenuOpen && (
-                <div className="md:hidden bg-secondary border-t border-gray-700 py-4 animate-in slide-in-from-top duration-300">
-                    <div className="container mx-auto px-4 flex flex-col gap-4 font-bold uppercase text-xs tracking-widest">
+                <div className="md:hidden bg-[#0F172A] border-t border-white/5 py-8 animate-in slide-in-from-top duration-300">
+                    <div className="container mx-auto px-6 flex flex-col gap-6 font-black uppercase text-[10px] tracking-widest">
                         {!isAdmin && (
-                            <Link to="/sell" onClick={() => setIsMenuOpen(false)} className="py-2 border-b border-gray-700 flex justify-between items-center text-accent">
+                            <Link to="/sell" onClick={() => setIsMenuOpen(false)} className="py-2 flex justify-between items-center text-accent">
                                 Sell Product <span>→</span>
                             </Link>
                         )}
-                        {user && (
-                            <Link to={isAdmin ? "/" : "/dashboard"} onClick={() => setIsMenuOpen(false)} className="py-2 border-b border-gray-700 flex justify-between items-center">
-                                {isAdmin ? "Manager Panel" : t('nav.dashboard')} <span>→</span>
+                        {user?.phone && (
+                            <Link to={isAdmin ? "/" : "/dashboard"} onClick={() => setIsMenuOpen(false)} className="py-2 flex justify-between items-center text-white">
+                                {isAdmin ? "Manager Terminal" : "My Dashboard"} <span>→</span>
                             </Link>
                         )}
-                        {!user && (
-                            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="py-2 border-b border-gray-700 flex justify-between items-center">
-                                {t('nav.account')} <span>→</span>
+                        {!user?.phone && (
+                            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="py-2 flex justify-between items-center text-white">
+                                Account Access <span>→</span>
                             </Link>
                         )}
                         {!isAdmin && (
-                            <Link to="/cart" onClick={() => setIsMenuOpen(false)} className="py-2 border-b border-gray-700 flex justify-between items-center">
-                                {t('nav.cart')} <span>→</span>
+                            <Link to="/cart" onClick={() => setIsMenuOpen(false)} className="py-2 flex justify-between items-center text-white">
+                                My Cart <span>→</span>
                             </Link>
                         )}
-                        {user && (
-                            <button onClick={handleLogout} className="py-2 text-red-500 text-left font-black tracking-[0.2em] border-t border-red-900/30 w-full mt-2 pt-4">
+                        {user?.phone && (
+                            <button onClick={handleLogout} className="py-6 text-red-500 text-left font-black tracking-[0.3em] border-t border-white/5 w-full mt-4">
                                 LOGOUT
                             </button>
                         )}
@@ -217,18 +150,18 @@ const Navbar = () => {
 
             {/* Category Bar (Desktop) - COMPLETELY HIDDEN FOR MANAGER */}
             {!isAdmin && !isAuthPage && (
-                <div className="bg-secondary text-[13px] font-black uppercase tracking-widest py-3 overflow-x-auto whitespace-nowrap scrollbar-hide border-t border-gray-700 hidden md:block">
-                    <div className="container mx-auto px-4 flex gap-10">
-                        <Link to="/all" className="flex items-center gap-1.5 text-accent">
-                            <Menu size={16} /> {t('nav.categories.all')}
+                <div className="bg-[#1E293B] text-[10px] font-black uppercase tracking-widest py-3 overflow-x-auto whitespace-nowrap scrollbar-hide border-t border-white/5 hidden md:block">
+                    <div className="container mx-auto px-6 flex items-center gap-10">
+                        <Link to="/all" className="flex items-center gap-2 text-accent bg-accent/10 px-3 py-1.5 rounded-lg">
+                            <Menu size={14} /> Catalog
                         </Link>
                         {categories.map(cat => (
-                            <Link 
-                                key={cat._id} 
-                                to={`/all?category=${cat.name}`} 
-                                className="hover:text-accent cursor-pointer transition-colors"
+                            <Link
+                                key={cat._id}
+                                to={`/all?category=${cat.name}`}
+                                className="text-gray-400 hover:text-white cursor-pointer transition-colors"
                             >
-                                {language === 'bn' ? cat.bnName : cat.name}
+                                {cat.name}
                             </Link>
                         ))}
                     </div>

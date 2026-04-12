@@ -130,8 +130,10 @@ const UserDashboard = () => {
                                         <p className="text-2xl font-black text-primary">৳{asset.price.toLocaleString()}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-1">You will get</p>
-                                        <p className="text-lg font-black text-success tracking-tighter">৳{(asset.price * 0.9).toLocaleString()}</p>
+                                        <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-1">Your Payout</p>
+                                        <p className="text-lg font-black text-success tracking-tighter">
+                                            ৳{(asset.price - (asset.serviceFee || Math.round(asset.price * 0.10))).toLocaleString()}
+                                        </p>
                                     </div>
                                 </div>
                                 {asset.status === 'PENDING_VERIFICATION' && (

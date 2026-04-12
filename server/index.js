@@ -1,4 +1,7 @@
 require('dotenv').config();
+if (process.env.NODE_ENV === 'development') {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -6,6 +9,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const uploadRoutes = require('./routes/uploadRoutes');
+const messageRoutes = require('./routes/messageRoutes');
 
 const app = express();
 
@@ -43,8 +48,9 @@ app.use('/api/assets', require('./routes/assetRoutes'));
 app.use('/api/ledger', require('./routes/ledgerRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
-app.use('/api/upload', require('./routes/uploadRoutes'));
+app.use('/api/upload', uploadRoutes);
 app.use('/api/orders', require('./routes/orderRoutes'));
+app.use('/api/messages', messageRoutes);
 
 // Database configuration
 mongoose.set('debug', true);
@@ -82,15 +88,14 @@ app.get('/api/ping-db', (req, res) => {
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
-    const rootPath = path.join(__dirname, '..');
-    const clientBuildPath = path.join(rootPath, 'client', 'dist');
+    const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
 
     // Check if build exists
     if (fs.existsSync(clientBuildPath)) {
         app.use(express.static(clientBuildPath));
 
         // Any route NOT handled by the API should serve the index.html
-        app.get('*all', (req, res) => {
+        app.get('*', (req, res) => {
             res.sendFile(path.resolve(clientBuildPath, 'index.html'));
         });
     } else {

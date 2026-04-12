@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
     try {
-        const { name, phone, email, password, role } = req.body;
+        const { name, phone, password, role } = req.body;
         console.log(`[AUTH] Registration attempt for phone: ${phone}`);
 
         if (!process.env.JWT_SECRET) {
@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
         let user = await User.findOne({ phone });
         if (user) return res.status(400).json({ message: 'Phone number already registered' });
 
-        user = new User({ name, phone, email, password, role: role || 'participant' });
+        user = new User({ name, phone, password, role: role || 'participant' });
         await user.save();
         console.log(`[AUTH] User created successfully: ${phone}`);
 
@@ -36,6 +36,9 @@ exports.login = async (req, res) => {
 
         const isMatch = await user.comparePassword(password);
         if (!isMatch) return res.status(400).json({ message: 'Invalid phone or password' });
+
+        user.loginCount = (user.loginCount || 0) + 1;
+        await user.save();
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.json({ token, user: { id: user._id, name: user.name, phone: user.phone, role: user.role } });

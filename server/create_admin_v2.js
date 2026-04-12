@@ -23,12 +23,12 @@ const setup = async () => {
         // Upsert Admin
         const adminData = {
             name: 'Hasib Admin',
-            email: '20210652885khan@juniv.edu',
+            phone: '01711111111',
             password: 'hasibhak@321', // Will be hashed by pre-save hook
             role: 'admin'
         };
 
-        const existingAdmin = await User.findOne({ email: adminData.email });
+        const existingAdmin = await User.findOne({ phone: adminData.phone });
         if (existingAdmin) {
             existingAdmin.role = 'admin';
             await existingAdmin.save();

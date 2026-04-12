@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
+const orderController = require('../controllers/orderController');
 const { auth, admin } = require('../middleware/auth');
+
+router.patch('/orders/:id', auth, admin, orderController.updateOrderStatus);
 
 /**
  * @openapi
@@ -49,5 +52,7 @@ router.patch('/assets/:id', auth, admin, adminController.updateAsset);
  */
 router.get('/health', auth, admin, adminController.getSystemHealth);
 router.get('/counts', auth, admin, adminController.getPendingCounts);
+router.post('/assets/:id/reject', auth, admin, adminController.rejectAsset);
+router.patch('/assets/:id/view', auth, admin, adminController.markAssetViewed);
 
 module.exports = router;

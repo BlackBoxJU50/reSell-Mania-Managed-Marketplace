@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { ShieldCheck, Truck, RotateCcw, Lock, DollarSign, Play, X } from 'lucide-react';
+import { ShieldCheck, Truck, RotateCcw, Lock, DollarSign, Play, X, Phone, MessageSquare } from 'lucide-react';
 
 const AssetDetails = () => {
     const { id } = useParams();
     const [asset, setAsset] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showOrderForm, setShowOrderForm] = useState(false);
+    const [showChatModal, setShowChatModal] = useState(false);
+    const [messageDraft, setMessageDraft] = useState('');
+    const [sendingMessage, setSendingMessage] = useState(false);
     const [orderLoading, setOrderLoading] = useState(false);
     
     const userJson = localStorage.getItem('user');
@@ -69,6 +72,27 @@ const AssetDetails = () => {
             alert('Failed to place order: ' + (err.response?.data?.message || err.message));
         } finally {
             setOrderLoading(false);
+        }
+    };
+
+    const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (!user) return navigate('/login');
+        if (!messageDraft.trim()) return;
+
+        setSendingMessage(true);
+        try {
+            await api.post('/messages', {
+                content: messageDraft,
+                assetId: asset._id
+            });
+            alert('Your message has been transmitted to reSell Mania admins.');
+            setShowChatModal(false);
+            setMessageDraft('');
+        } catch (err) {
+            alert('Failed to send message');
+        } finally {
+            setSendingMessage(false);
         }
     };
 
@@ -189,18 +213,35 @@ const AssetDetails = () => {
                         <p className="text-[10px] mt-1 text-success font-black uppercase tracking-widest flex items-center gap-1"><Truck size={12} /> Fast Delivery</p>
                     </div>
 
-                    <button 
-                        onClick={() => {
-                            if (!user) {
-                                navigate('/login');
-                            } else {
-                                setShowOrderForm(true);
-                            }
-                        }} 
-                        className="w-full bg-accent text-primary py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-accent/20 hover:scale-[1.02] active:scale-95 transition-all"
-                    >
-                        Buy it Now
-                    </button>
+                    <div className="flex flex-col gap-2">
+                        <a 
+                            href="tel:01706431932"
+                            className="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 shadow-lg shadow-green-200/50 hover:bg-green-700 transition-all active:scale-95"
+                        >
+                            <Phone size={14} /> Call Now
+                        </a>
+                        <button 
+                            onClick={() => setShowChatModal(true)}
+                            className="w-full bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:bg-secondary transition-all active:scale-95"
+                        >
+                            <MessageSquare size={14} /> Live Chat
+                        </button>
+                    </div>
+
+                    {user?.role !== 'admin' && asset.status === 'LIVE' && (
+                        <button 
+                            onClick={() => {
+                                if (!user) {
+                                    navigate('/login');
+                                } else {
+                                    setShowOrderForm(true);
+                                }
+                            }} 
+                            className="w-full bg-accent text-primary py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-accent/20 hover:scale-[1.02] active:scale-95 transition-all"
+                        >
+                            Buy it Now
+                        </button>
+                    )}
 
                     <div className="space-y-4 pt-4 border-t border-gray-50">
                         <div className="flex gap-3 text-[9px] text-gray-400 font-black uppercase leading-tight">
@@ -300,6 +341,42 @@ const AssetDetails = () => {
                             </div>
                         </form>
                     </div>
+                </div>
+            )}
+            {showChatModal && (
+                <div className="fixed inset-0 z-[100] bg-primary/40 backdrop-blur-md flex items-end md:items-center justify-center p-4">
+                    <motion.div 
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="bg-white w-full max-w-lg rounded-[32px] overflow-hidden shadow-2xl"
+                    >
+                        <header className="p-8 border-b border-gray-50 flex justify-between items-center">
+                            <div>
+                                <h3 className="text-xl font-black text-primary tracking-tighter uppercase">Direct Support Channel</h3>
+                                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Inquiring about: {asset.title}</p>
+                            </div>
+                            <button onClick={() => setShowChatModal(false)} className="text-gray-400 hover:text-primary"><X size={24} /></button>
+                        </header>
+                        <form onSubmit={handleSendMessage} className="p-8 space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Transmission Payload</label>
+                                <textarea 
+                                    className="w-full bg-gray-50 border-none rounded-2xl p-6 font-bold text-sm resize-none h-40 focus:ring-2 focus:ring-primary placeholder:text-gray-300"
+                                    placeholder="Write your message to the admin team here..."
+                                    value={messageDraft}
+                                    onChange={(e) => setMessageDraft(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <button 
+                                type="submit" 
+                                disabled={sendingMessage}
+                                className="w-full bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                            >
+                                {sendingMessage ? 'Transmitting...' : <><MessageSquare size={16} /> Broadcast Message</>}
+                            </button>
+                        </form>
+                    </motion.div>
                 </div>
             )}
         </div>

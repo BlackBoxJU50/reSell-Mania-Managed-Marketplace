@@ -38,8 +38,8 @@ exports.createOrder = async (req, res) => {
 exports.getOrders = async (req, res) => {
     try {
         const orders = await Order.find()
-            .populate('buyer', 'name email')
-            .populate('seller', 'name email')
+            .populate('buyer', 'name phone')
+            .populate('seller', 'name phone')
             .populate('asset', 'title price');
         res.json(orders);
     } catch (err) {
@@ -61,20 +61,25 @@ exports.getUserOrders = async (req, res) => {
 
 exports.updateOrderStatus = async (req, res) => {
     try {
-        const { status } = req.body;
+        const { status, coupon } = req.body;
         const order = await Order.findById(req.params.id);
         if (!order) return res.status(404).json({ message: 'Order not found' });
 
         const oldStatus = order.status;
-        order.status = status;
+        if (status) order.status = status;
+        if (coupon !== undefined) order.coupon = coupon;
+        
         await order.save();
 
-        // If moved to SHIPPED, capture the platform fee in Ledger
+        // Timestamps for lifecycle tracking
+        if (status === 'CONFIRMED' && oldStatus !== 'CONFIRMED') {
+            order.confirmedAt = new Date();
+        }
         if (status === 'SHIPPED' && oldStatus !== 'SHIPPED') {
-            const adminFee = order.totalPrice * 0.10;
+            order.shippedAt = new Date();
             
-            // Create a pseudo-transaction or link to existing if you have a full transaction model
-            // For now, let's record the platform fee in the Ledger directly
+            // Capture the platform fee in Ledger
+            const adminFee = order.serviceFee || (order.totalPrice * 0.10);
             const feeEntry = new Ledger({
                 direction: 'IN',
                 amount: adminFee,
@@ -83,6 +88,9 @@ exports.updateOrderStatus = async (req, res) => {
                 note: `Fee for order ${order._id}`
             });
             await feeEntry.save();
+        }
+        if (status === 'DELIVERED' && oldStatus !== 'DELIVERED') {
+            order.deliveredAt = new Date();
         }
 
         res.json(order);

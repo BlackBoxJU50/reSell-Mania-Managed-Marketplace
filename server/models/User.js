@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   phone: { type: String, required: true, unique: true },
-  email: { type: String, unique: true, sparse: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['participant', 'admin'], default: 'participant' },
   identityDocs: [{ type: String }], // URLs to identity documents
@@ -14,6 +13,8 @@ const userSchema = new mongoose.Schema({
   },
   location: { type: String },
   rating: { type: Number, default: 0 },
+  loginCount: { type: Number, default: 0 },
+  itemsViewedCount: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
 });
 
