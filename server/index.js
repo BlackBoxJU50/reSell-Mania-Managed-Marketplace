@@ -95,7 +95,7 @@ if (process.env.NODE_ENV === 'production') {
         app.use(express.static(clientBuildPath));
 
         // Any route NOT handled by the API should serve the index.html
-        app.get('*', (req, res) => {
+        app.get('*all', (req, res) => {
             res.sendFile(path.resolve(clientBuildPath, 'index.html'));
         });
     } else {
